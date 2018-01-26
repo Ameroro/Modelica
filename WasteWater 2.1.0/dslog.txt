@@ -1,0 +1,16 @@
+Log-file of program ./dymosim
+(generated: Fri Jan 26 11:06:53 2018)
+
+dymosim started
+... "dsin.txt" loading (dymosim input file)
+... loading "inf_dry" from "Inf_dry.txt"
+The following error was detected at time: 0
+Not possible to open file "Inf_dry.txt": No such file or directory
+
+The stack of functions is:
+Modelica.Blocks.Sources.CombiTimeTable.readTableData
+Modelica.Blocks.Sources.CombiTimeTable.readTableData(
+combiTimeTable.tableID, 
+false, 
+combiTimeTable.verboseRead)
+Error: Failed to start model.

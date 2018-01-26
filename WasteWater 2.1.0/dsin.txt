@@ -1,0 +1,3439 @@
+#1
+char Aclass(3,24)
+Adymosim
+1.4
+Modelica experiment file
+
+
+#    Experiment parameters
+double experiment(7,1)
+       0                   # StartTime    Time at which integration starts
+                           #              (and linearization and trimming time)
+       1                   # StopTime     Time at which integration stops
+       0                   # Increment    Communication step size, if > 0
+     500                   # nInterval    Number of communication intervals, if > 0
+ 1.0000000000000000E-004   # Tolerance    Relative precision of signals for
+                           #              simulation, linearization and trimming
+       0                   # MaxFixedStep Maximum step size of fixed step size
+                           #              integrators, if > 0.0
+       8                   # Algorithm    Integration algorithm as integer (1...28)
+                           #
+                           #             | model|       |        | dense | state |
+                           # Algorithm   | typ  | stiff | order  | output| event |
+                           # ------------+------+-------+--------+-------+-------+
+                           #  1 | deabm  |  ode |   no  |  1-12  |  yes  |   no  |
+                           #  2 | lsode1 |  ode |   no  |  1-12  |  yes  |   no  |
+                           #  3 | lsode2 |  ode |  yes  |  1-5   |  yes  |   no  |
+                           #  4 | lsodar |  ode |  both |1-12,1-5|  yes  |  yes  |
+                           #  5 | dopri5 |  ode |   no  |   5    |   no  |   no  |
+                           #  6 | dopri8 |  ode |   no  |   8    |   no  |   no  |
+                           #  7 | grk4t  |  ode |  yes  |   4    |   no  |   no  |
+                           #  8 | dassl  |  dae |  yes  |  1-5   |  yes  |  yes  |
+                           #  9 | odassl | hdae |  yes  |  1-5   |  yes  |  yes  |
+                           # 10 | mexx   | hdae |   no  |  2-24  |   no  |   no  |
+                           # 11 | euler  |  ode |   no  |   1    |   no  |  yes  |
+                           # 12 | rkfix2 |  ode |   no  |   2    |   no  |  yes  |
+                           # 13 | rkfix3 |  ode |   no  |   3    |   no  |  yes  |
+                           # 14 | rkfix4 |  ode |   no  |   4    |   no  |  yes  |
+                           #>=14| others |  ode |yes/no |  2-5   |   yes |  yes  |
+                           # ---+--------+------+-------+--------+-------+-------+
+                           # euler and rkfix have fixed stepsize.
+
+
+#    Method tuning parameters
+double method(27,1)
+       1                   # grid     type of communication time grid, defined by
+                           #          = 1: equidistant points ("Increment/nInterval")
+                           #          = 2: vector of grid points ("tgrid")
+                           #          = 3: variable step integrator (automatically)
+                           #          = 4: model (call of "increment" in Dymola, e.g.
+                           #                      incr=Time > 2 then 0 else 0.1
+                           #                      dummy=increment(incr))
+                           #          grid = 1,3 is stopped by "StopTime"
+                           #          grid = 2   is stopped by "tgrid(last)"
+                           #          grid = 4   runs forever (stopped by model)
+       1                   # nt       Use every NT time instant, if grid = 3
+       3                   # dense    1/2/3 restart/step/interpolate GRID points
+       1                   # evgrid   0/1 do not/save event points in comm. time grid
+       1                   # evu      0/1 U-discontinuity does not/trigger events
+       0                   # evuord       U-discontinuity order to consider (0,1,...)
+       0                   # error    0/1/2 One message/warning/error messages
+       0                   # jac      0/1 Compute jacobian numerically/by BLOCKJ
+       0                   # xd0c     0/1 Compute/set XD0
+       0                   # f3       0/1 Ignore/use F3 of HDAE (= index 1)
+       0                   # f4       0/1 Ignore/use F4 of HDAE (= index 2)
+       0                   # f5       0/1 Ignore/use F5 of HDAE (= invar.)
+       0                   # debug    flags for debug information (1<<0 uses pdebug) 
+     100                   # pdebug       priority of debug information (1...100)
+       0                   # fmax     Maximum number of evaluations of BLOCKF, if > 0
+       0                   # ordmax   Maximum allowed integration order, if > 0
+       0                   # hmax     Maximum absolute stepsize, if > 0
+       0                   # hmin     Minimum absolute stepsize, if > 0 (use with care!)
+       0                   # h0       Stepsize to be attempted on first step, if > 0
+ 2.0000000000000000E-014   # teps     Bound to check, if 2 equal time instants
+ 1.0000000000000000E-010   # eveps    Hysteresis epsilon at event points
+      20                   # eviter   Maximum number of event iterations
+ 9.9999999999999995E-007   # delaym   Minimum time increment in delay buffers
+       1                   # fexcep   0/1 floating exception crashes/stops dymosim
+       1                   # tscale   clock-time = tscale*simulation-time, if grid = 5
+                           #          > 1: simulation too slow
+                           #          = 1: simulation-time = real-time
+                           #          < 1: simulation too fast
+       1                   # shared   (not used)
+    2473                   # memkey   (not used)
+
+
+#    Output parameters
+int settings(13,1)
+ 0                         # lprec    0/1 do not/store result data in double
+ 1                         # lx       0/1 do not/store x  (state variables)
+ 1                         # lxd      0/1 do not/store xd (derivative of states)
+ 1                         # lu       0/1 do not/store u  (input     signals)
+ 1                         # ly       0/1 do not/store y  (output    signals)
+ 0                         # lz       0/1 do not/store z  (indicator signals)
+ 1                         # lw       0/1 do not/store w  (auxiliary signals)
+ 1                         # la       0/1 do not/store a  (alias     signals)
+ 0                         # lperf    0/1 do not/store performance indicators
+ 0                         # levent   0/1 do not/store event point
+ 1                         # lres     0/1 do not/store results on result file
+ 0                         # lshare   0/1 do not/store info data for shared memory on dsshare.txt
+ 1                         # lform    0/1 ASCII/Matlab-binary storage format of results
+                           #              (for simulation/linearization; not for trimming)
+
+
+#    Names of initial variables
+char initialName(820,30)
+nitri1.Y_h
+nitri1.Y_a
+nitri1.f_p
+nitri1.i_xb
+nitri1.i_xp
+nitri1.mu_h
+nitri1.b_h
+nitri1.mu_a
+nitri1.b_a
+nitri1.k_a
+nitri1.k_h
+nitri1.K_x
+nitri1.mu_h_T
+nitri1.b_h_T
+nitri1.mu_a_T
+nitri1.b_a_T
+nitri1.k_a_T
+nitri1.k_h_T
+nitri1.K_x_T
+nitri1.K_nh
+nitri1.K_s
+nitri1.K_oh
+nitri1.K_no
+nitri1.K_oa
+nitri1.ny_g
+nitri1.ny_h
+nitri1.Si
+nitri1.der(Si)
+nitri1.Ss
+nitri1.der(Ss)
+nitri1.Xi
+nitri1.der(Xi)
+nitri1.Xs
+nitri1.der(Xs)
+nitri1.Xbh
+nitri1.der(Xbh)
+nitri1.Xba
+nitri1.der(Xba)
+nitri1.Xp
+nitri1.der(Xp)
+nitri1.So
+nitri1.der(So)
+nitri1.Sno
+nitri1.der(Sno)
+nitri1.Snh
+nitri1.der(Snh)
+nitri1.Snd
+nitri1.der(Snd)
+nitri1.Xnd
+nitri1.der(Xnd)
+nitri1.Salk
+nitri1.der(Salk)
+nitri1.p1
+nitri1.p2
+nitri1.p3
+nitri1.p4
+nitri1.p5
+nitri1.p6
+nitri1.p7
+nitri1.p8
+nitri1.r1
+nitri1.r2
+nitri1.r3
+nitri1.r4
+nitri1.r5
+nitri1.r6
+nitri1.r7
+nitri1.r8
+nitri1.r9
+nitri1.r10
+nitri1.r11
+nitri1.r12
+nitri1.r13
+nitri1.inputSs
+nitri1.inputXs
+nitri1.inputXbh
+nitri1.inputXba
+nitri1.inputXp
+nitri1.inputSo
+nitri1.inputSno
+nitri1.inputSnh
+nitri1.inputSnd
+nitri1.inputXnd
+nitri1.inputSalk
+nitri1.aeration
+nitri1.In.Q
+nitri1.MeasurePort.Q
+nitri1.V
+nitri1.alpha
+nitri1.de
+nitri1.R_air
+nitri1.So_sat
+nitri1.AirIn.Q_air
+nitri2.Y_h
+nitri2.Y_a
+nitri2.f_p
+nitri2.i_xb
+nitri2.i_xp
+nitri2.mu_h
+nitri2.b_h
+nitri2.mu_a
+nitri2.b_a
+nitri2.k_a
+nitri2.k_h
+nitri2.K_x
+nitri2.mu_h_T
+nitri2.b_h_T
+nitri2.mu_a_T
+nitri2.b_a_T
+nitri2.k_a_T
+nitri2.k_h_T
+nitri2.K_x_T
+nitri2.K_nh
+nitri2.K_s
+nitri2.K_oh
+nitri2.K_no
+nitri2.K_oa
+nitri2.ny_g
+nitri2.ny_h
+nitri2.Si
+nitri2.der(Si)
+nitri2.Ss
+nitri2.der(Ss)
+nitri2.Xi
+nitri2.der(Xi)
+nitri2.Xs
+nitri2.der(Xs)
+nitri2.Xbh
+nitri2.der(Xbh)
+nitri2.Xba
+nitri2.der(Xba)
+nitri2.Xp
+nitri2.der(Xp)
+nitri2.So
+nitri2.der(So)
+nitri2.Sno
+nitri2.der(Sno)
+nitri2.Snh
+nitri2.der(Snh)
+nitri2.Snd
+nitri2.der(Snd)
+nitri2.Xnd
+nitri2.der(Xnd)
+nitri2.Salk
+nitri2.der(Salk)
+nitri2.p1
+nitri2.p2
+nitri2.p3
+nitri2.p4
+nitri2.p5
+nitri2.p6
+nitri2.p7
+nitri2.p8
+nitri2.r1
+nitri2.r2
+nitri2.r3
+nitri2.r4
+nitri2.r5
+nitri2.r6
+nitri2.r7
+nitri2.r8
+nitri2.r9
+nitri2.r10
+nitri2.r11
+nitri2.r12
+nitri2.r13
+nitri2.inputSs
+nitri2.inputXs
+nitri2.inputXbh
+nitri2.inputXba
+nitri2.inputXp
+nitri2.inputSo
+nitri2.inputSno
+nitri2.inputSnh
+nitri2.inputSnd
+nitri2.inputXnd
+nitri2.inputSalk
+nitri2.aeration
+nitri2.MeasurePort.Q
+nitri2.V
+nitri2.alpha
+nitri2.de
+nitri2.R_air
+nitri2.So_sat
+nitri2.AirIn.Q_air
+nitri3.Y_h
+nitri3.Y_a
+nitri3.f_p
+nitri3.i_xb
+nitri3.i_xp
+nitri3.mu_h
+nitri3.b_h
+nitri3.mu_a
+nitri3.b_a
+nitri3.k_a
+nitri3.k_h
+nitri3.K_x
+nitri3.mu_h_T
+nitri3.b_h_T
+nitri3.mu_a_T
+nitri3.b_a_T
+nitri3.k_a_T
+nitri3.k_h_T
+nitri3.K_x_T
+nitri3.K_nh
+nitri3.K_s
+nitri3.K_oh
+nitri3.K_no
+nitri3.K_oa
+nitri3.ny_g
+nitri3.ny_h
+nitri3.Si
+nitri3.der(Si)
+nitri3.Ss
+nitri3.der(Ss)
+nitri3.Xi
+nitri3.der(Xi)
+nitri3.Xs
+nitri3.der(Xs)
+nitri3.Xbh
+nitri3.der(Xbh)
+nitri3.Xba
+nitri3.der(Xba)
+nitri3.Xp
+nitri3.der(Xp)
+nitri3.So
+nitri3.der(So)
+nitri3.Sno
+nitri3.der(Sno)
+nitri3.Snh
+nitri3.der(Snh)
+nitri3.Snd
+nitri3.der(Snd)
+nitri3.Xnd
+nitri3.der(Xnd)
+nitri3.Salk
+nitri3.der(Salk)
+nitri3.p1
+nitri3.p2
+nitri3.p3
+nitri3.p4
+nitri3.p5
+nitri3.p6
+nitri3.p7
+nitri3.p8
+nitri3.r1
+nitri3.r2
+nitri3.r3
+nitri3.r4
+nitri3.r5
+nitri3.r6
+nitri3.r7
+nitri3.r8
+nitri3.r9
+nitri3.r10
+nitri3.r11
+nitri3.r12
+nitri3.r13
+nitri3.inputSs
+nitri3.inputXs
+nitri3.inputXbh
+nitri3.inputXba
+nitri3.inputXp
+nitri3.inputSo
+nitri3.inputSno
+nitri3.inputSnh
+nitri3.inputSnd
+nitri3.inputXnd
+nitri3.inputSalk
+nitri3.aeration
+nitri3.MeasurePort.Q
+nitri3.V
+nitri3.alpha
+nitri3.de
+nitri3.R_air
+nitri3.So_sat
+nitri3.AirIn.Q_air
+deni1.Y_h
+deni1.Y_a
+deni1.f_p
+deni1.i_xb
+deni1.i_xp
+deni1.mu_h
+deni1.b_h
+deni1.mu_a
+deni1.b_a
+deni1.k_a
+deni1.k_h
+deni1.K_x
+deni1.mu_h_T
+deni1.b_h_T
+deni1.mu_a_T
+deni1.b_a_T
+deni1.k_a_T
+deni1.k_h_T
+deni1.K_x_T
+deni1.K_nh
+deni1.K_s
+deni1.K_oh
+deni1.K_no
+deni1.K_oa
+deni1.ny_g
+deni1.ny_h
+deni1.Si
+deni1.der(Si)
+deni1.Ss
+deni1.der(Ss)
+deni1.Xi
+deni1.der(Xi)
+deni1.Xs
+deni1.der(Xs)
+deni1.Xbh
+deni1.der(Xbh)
+deni1.Xba
+deni1.der(Xba)
+deni1.Xp
+deni1.der(Xp)
+deni1.So
+deni1.der(So)
+deni1.Sno
+deni1.der(Sno)
+deni1.Snh
+deni1.der(Snh)
+deni1.Snd
+deni1.der(Snd)
+deni1.Xnd
+deni1.der(Xnd)
+deni1.Salk
+deni1.der(Salk)
+deni1.p1
+deni1.p2
+deni1.p3
+deni1.p4
+deni1.p5
+deni1.p6
+deni1.p7
+deni1.p8
+deni1.r1
+deni1.r2
+deni1.r3
+deni1.r4
+deni1.r5
+deni1.r6
+deni1.r7
+deni1.r8
+deni1.r9
+deni1.r10
+deni1.r11
+deni1.r12
+deni1.r13
+deni1.inputSs
+deni1.inputXs
+deni1.inputXbh
+deni1.inputXba
+deni1.inputXp
+deni1.inputSo
+deni1.inputSno
+deni1.inputSnh
+deni1.inputSnd
+deni1.inputXnd
+deni1.inputSalk
+deni1.aeration
+deni1.MeasurePort.Q
+deni1.V
+deni2.Y_h
+deni2.Y_a
+deni2.f_p
+deni2.i_xb
+deni2.i_xp
+deni2.mu_h
+deni2.b_h
+deni2.mu_a
+deni2.b_a
+deni2.k_a
+deni2.k_h
+deni2.K_x
+deni2.mu_h_T
+deni2.b_h_T
+deni2.mu_a_T
+deni2.b_a_T
+deni2.k_a_T
+deni2.k_h_T
+deni2.K_x_T
+deni2.K_nh
+deni2.K_s
+deni2.K_oh
+deni2.K_no
+deni2.K_oa
+deni2.ny_g
+deni2.ny_h
+deni2.Si
+deni2.der(Si)
+deni2.Ss
+deni2.der(Ss)
+deni2.Xi
+deni2.der(Xi)
+deni2.Xs
+deni2.der(Xs)
+deni2.Xbh
+deni2.der(Xbh)
+deni2.Xba
+deni2.der(Xba)
+deni2.Xp
+deni2.der(Xp)
+deni2.So
+deni2.der(So)
+deni2.Sno
+deni2.der(Sno)
+deni2.Snh
+deni2.der(Snh)
+deni2.Snd
+deni2.der(Snd)
+deni2.Xnd
+deni2.der(Xnd)
+deni2.Salk
+deni2.der(Salk)
+deni2.p1
+deni2.p2
+deni2.p3
+deni2.p4
+deni2.p5
+deni2.p6
+deni2.p7
+deni2.p8
+deni2.r1
+deni2.r2
+deni2.r3
+deni2.r4
+deni2.r5
+deni2.r6
+deni2.r7
+deni2.r8
+deni2.r9
+deni2.r10
+deni2.r11
+deni2.r12
+deni2.r13
+deni2.inputSs
+deni2.inputXs
+deni2.inputXbh
+deni2.inputXba
+deni2.inputXp
+deni2.inputSo
+deni2.inputSno
+deni2.inputSnh
+deni2.inputSnd
+deni2.inputXnd
+deni2.inputSalk
+deni2.aeration
+deni2.In.Si
+deni2.In.Ss
+deni2.In.Xi
+deni2.In.Xs
+deni2.In.Xbh
+deni2.In.Xba
+deni2.In.Xp
+deni2.In.So
+deni2.In.Sno
+deni2.In.Snh
+deni2.In.Snd
+deni2.In.Xnd
+deni2.In.Salk
+deni2.MeasurePort.Q
+deni2.V
+wWSource.Out.Q
+wWSource.Out.Si
+wWSource.Out.Ss
+wWSource.Out.Xi
+wWSource.Out.Xs
+wWSource.Out.Xbh
+wWSource.Out.Xba
+wWSource.Out.Xp
+wWSource.Out.So
+wWSource.Out.Sno
+wWSource.Out.Snh
+wWSource.Out.Snd
+wWSource.Out.Xnd
+wWSource.Out.Salk
+mixer2_1.In2.Q
+mixer2_1.In2.Si
+mixer2_1.In2.Ss
+mixer2_1.In2.Xi
+mixer2_1.In2.Xs
+mixer2_1.In2.Xbh
+mixer2_1.In2.Xba
+mixer2_1.In2.Xp
+mixer2_1.In2.So
+mixer2_1.In2.Sno
+mixer2_1.In2.Snh
+mixer2_1.In2.Snd
+mixer2_1.In2.Xnd
+mixer2_1.In2.Salk
+mixer2_2.In1.Q
+mixer2_2.In1.Xi
+mixer2_2.In1.Xs
+mixer2_2.In1.Xbh
+mixer2_2.In1.Xba
+mixer2_2.In1.Xp
+mixer2_2.In1.Xnd
+mixer2_2.In2.Q
+secClarModTakacs.rXi
+secClarModTakacs.rXs
+secClarModTakacs.rXbh
+secClarModTakacs.rXba
+secClarModTakacs.rXp
+secClarModTakacs.rXnd
+secClarModTakacs.hsc
+secClarModTakacs.n
+secClarModTakacs.zm
+secClarModTakacs.Asc
+secClarModTakacs.Xt
+secClarModTakacs.Xf
+secClarModTakacs.Feed.Q
+secClarModTakacs.Effluent.Q
+secClarModTakacs.Effluent.Xi
+secClarModTakacs.Effluent.Xs
+secClarModTakacs.Effluent.Xbh
+secClarModTakacs.Effluent.Xba
+secClarModTakacs.Effluent.Xp
+secClarModTakacs.Effluent.Xnd
+secClarModTakacs.Waste.Q
+secClarModTakacs.Waste.Xi
+secClarModTakacs.Waste.Xs
+secClarModTakacs.Waste.Xbh
+secClarModTakacs.Waste.Xba
+secClarModTakacs.Waste.Xp
+secClarModTakacs.Waste.Xnd
+secClarModTakacs.S1.zm
+secClarModTakacs.S1.Asc
+secClarModTakacs.S1.X
+secClarModTakacs.S1.der(X)
+secClarModTakacs.S1.vS
+secClarModTakacs.S1.Jsm
+secClarModTakacs.S1.Si
+secClarModTakacs.S1.der(Si)
+secClarModTakacs.S1.Ss
+secClarModTakacs.S1.der(Ss)
+secClarModTakacs.S1.So
+secClarModTakacs.S1.der(So)
+secClarModTakacs.S1.Sno
+secClarModTakacs.S1.der(Sno)
+secClarModTakacs.S1.Snh
+secClarModTakacs.S1.der(Snh)
+secClarModTakacs.S1.Snd
+secClarModTakacs.S1.der(Snd)
+secClarModTakacs.S1.Salk
+secClarModTakacs.S1.der(Salk)
+secClarModTakacs.S1.Up.SedFlux
+secClarModTakacs.S2.zm
+secClarModTakacs.S2.Asc
+secClarModTakacs.S2.X
+secClarModTakacs.S2.der(X)
+secClarModTakacs.S2.vS
+secClarModTakacs.S2.Si
+secClarModTakacs.S2.der(Si)
+secClarModTakacs.S2.Ss
+secClarModTakacs.S2.der(Ss)
+secClarModTakacs.S2.So
+secClarModTakacs.S2.der(So)
+secClarModTakacs.S2.Sno
+secClarModTakacs.S2.der(Sno)
+secClarModTakacs.S2.Snh
+secClarModTakacs.S2.der(Snh)
+secClarModTakacs.S2.Snd
+secClarModTakacs.S2.der(Snd)
+secClarModTakacs.S2.Salk
+secClarModTakacs.S2.der(Salk)
+secClarModTakacs.S2.Up.SedFlux
+secClarModTakacs.S3.zm
+secClarModTakacs.S3.Asc
+secClarModTakacs.S3.X
+secClarModTakacs.S3.der(X)
+secClarModTakacs.S3.vS
+secClarModTakacs.S3.Si
+secClarModTakacs.S3.der(Si)
+secClarModTakacs.S3.Ss
+secClarModTakacs.S3.der(Ss)
+secClarModTakacs.S3.So
+secClarModTakacs.S3.der(So)
+secClarModTakacs.S3.Sno
+secClarModTakacs.S3.der(Sno)
+secClarModTakacs.S3.Snh
+secClarModTakacs.S3.der(Snh)
+secClarModTakacs.S3.Snd
+secClarModTakacs.S3.der(Snd)
+secClarModTakacs.S3.Salk
+secClarModTakacs.S3.der(Salk)
+secClarModTakacs.S3.Up.SedFlux
+secClarModTakacs.S4.zm
+secClarModTakacs.S4.Asc
+secClarModTakacs.S4.X
+secClarModTakacs.S4.der(X)
+secClarModTakacs.S4.vS
+secClarModTakacs.S4.Si
+secClarModTakacs.S4.der(Si)
+secClarModTakacs.S4.Ss
+secClarModTakacs.S4.der(Ss)
+secClarModTakacs.S4.So
+secClarModTakacs.S4.der(So)
+secClarModTakacs.S4.Sno
+secClarModTakacs.S4.der(Sno)
+secClarModTakacs.S4.Snh
+secClarModTakacs.S4.der(Snh)
+secClarModTakacs.S4.Snd
+secClarModTakacs.S4.der(Snd)
+secClarModTakacs.S4.Salk
+secClarModTakacs.S4.der(Salk)
+secClarModTakacs.S4.Up.SedFlux
+secClarModTakacs.S5.zm
+secClarModTakacs.S5.Asc
+secClarModTakacs.S5.X
+secClarModTakacs.S5.der(X)
+secClarModTakacs.S5.vS
+secClarModTakacs.S5.Si
+secClarModTakacs.S5.der(Si)
+secClarModTakacs.S5.Ss
+secClarModTakacs.S5.der(Ss)
+secClarModTakacs.S5.So
+secClarModTakacs.S5.der(So)
+secClarModTakacs.S5.Sno
+secClarModTakacs.S5.der(Sno)
+secClarModTakacs.S5.Snh
+secClarModTakacs.S5.der(Snh)
+secClarModTakacs.S5.Snd
+secClarModTakacs.S5.der(Snd)
+secClarModTakacs.S5.Salk
+secClarModTakacs.S5.der(Salk)
+secClarModTakacs.S5.Up.SedFlux
+secClarModTakacs.S6.zm
+secClarModTakacs.S6.Asc
+secClarModTakacs.S6.X
+secClarModTakacs.S6.der(X)
+secClarModTakacs.S6.vS
+secClarModTakacs.S6.Si
+secClarModTakacs.S6.der(Si)
+secClarModTakacs.S6.Ss
+secClarModTakacs.S6.der(Ss)
+secClarModTakacs.S6.So
+secClarModTakacs.S6.der(So)
+secClarModTakacs.S6.Sno
+secClarModTakacs.S6.der(Sno)
+secClarModTakacs.S6.Snh
+secClarModTakacs.S6.der(Snh)
+secClarModTakacs.S6.Snd
+secClarModTakacs.S6.der(Snd)
+secClarModTakacs.S6.Salk
+secClarModTakacs.S6.der(Salk)
+secClarModTakacs.S6.Up.SedFlux
+secClarModTakacs.S7.zm
+secClarModTakacs.S7.Asc
+secClarModTakacs.S7.X
+secClarModTakacs.S7.der(X)
+secClarModTakacs.S7.vS
+secClarModTakacs.S7.Si
+secClarModTakacs.S7.der(Si)
+secClarModTakacs.S7.Ss
+secClarModTakacs.S7.der(Ss)
+secClarModTakacs.S7.So
+secClarModTakacs.S7.der(So)
+secClarModTakacs.S7.Sno
+secClarModTakacs.S7.der(Sno)
+secClarModTakacs.S7.Snh
+secClarModTakacs.S7.der(Snh)
+secClarModTakacs.S7.Snd
+secClarModTakacs.S7.der(Snd)
+secClarModTakacs.S7.Salk
+secClarModTakacs.S7.der(Salk)
+secClarModTakacs.S7.Xt
+secClarModTakacs.S7.Up.SedFlux
+secClarModTakacs.S8.zm
+secClarModTakacs.S8.Asc
+secClarModTakacs.S8.X
+secClarModTakacs.S8.der(X)
+secClarModTakacs.S8.vS
+secClarModTakacs.S8.Si
+secClarModTakacs.S8.der(Si)
+secClarModTakacs.S8.Ss
+secClarModTakacs.S8.der(Ss)
+secClarModTakacs.S8.So
+secClarModTakacs.S8.der(So)
+secClarModTakacs.S8.Sno
+secClarModTakacs.S8.der(Sno)
+secClarModTakacs.S8.Snh
+secClarModTakacs.S8.der(Snh)
+secClarModTakacs.S8.Snd
+secClarModTakacs.S8.der(Snd)
+secClarModTakacs.S8.Salk
+secClarModTakacs.S8.der(Salk)
+secClarModTakacs.S8.Xt
+secClarModTakacs.S8.Up.SedFlux
+secClarModTakacs.S9.zm
+secClarModTakacs.S9.Asc
+secClarModTakacs.S9.X
+secClarModTakacs.S9.der(X)
+secClarModTakacs.S9.vS
+secClarModTakacs.S9.Si
+secClarModTakacs.S9.der(Si)
+secClarModTakacs.S9.Ss
+secClarModTakacs.S9.der(Ss)
+secClarModTakacs.S9.So
+secClarModTakacs.S9.der(So)
+secClarModTakacs.S9.Sno
+secClarModTakacs.S9.der(Sno)
+secClarModTakacs.S9.Snh
+secClarModTakacs.S9.der(Snh)
+secClarModTakacs.S9.Snd
+secClarModTakacs.S9.der(Snd)
+secClarModTakacs.S9.Salk
+secClarModTakacs.S9.der(Salk)
+secClarModTakacs.S9.Xt
+secClarModTakacs.S9.Up.SedFlux
+secClarModTakacs.S10.zm
+secClarModTakacs.S10.Asc
+secClarModTakacs.S10.X
+secClarModTakacs.S10.der(X)
+secClarModTakacs.S10.vS
+secClarModTakacs.S10.Si
+secClarModTakacs.S10.der(Si)
+secClarModTakacs.S10.Ss
+secClarModTakacs.S10.der(Ss)
+secClarModTakacs.S10.So
+secClarModTakacs.S10.der(So)
+secClarModTakacs.S10.Sno
+secClarModTakacs.S10.der(Sno)
+secClarModTakacs.S10.Snh
+secClarModTakacs.S10.der(Snh)
+secClarModTakacs.S10.Snd
+secClarModTakacs.S10.der(Snd)
+secClarModTakacs.S10.Salk
+secClarModTakacs.S10.der(Salk)
+secClarModTakacs.S10.Xt
+blower1.Q_max
+blower1.Q_min
+blower1.H
+blower2.Q_max
+blower2.Q_min
+blower2.H
+blower3.Q_max
+blower3.Q_min
+blower3.H
+blower3.u
+PI.k
+PI.T
+PI.initType
+PI.x_start
+PI.y_start
+PI.u
+PI.x
+PI.der(x)
+feedback.u1
+step.height
+step.offset
+step.startTime
+pump2.Q_min
+pump2.Q_max
+pump2.H
+pump3.Q_min
+pump3.Q_max
+pump3.H
+pump3.u
+sensor_O2_1.In.Q
+sensor_NO1.In.Q
+step1.height
+step1.y
+step1.offset
+step1.startTime
+feedback1.y
+PI1.k
+PI1.T
+PI1.initType
+PI1.x_start
+PI1.y_start
+PI1.x
+PI1.der(x)
+constant_B2.k
+pump1.Q_min
+pump1.Q_max
+pump1.H
+Temperatur.k
+constant_B.k
+combiTimeTable.nout
+combiTimeTable.tableOnFile
+combiTimeTable.verboseRead
+combiTimeTable.columns[1]
+combiTimeTable.columns[2]
+combiTimeTable.columns[3]
+combiTimeTable.columns[4]
+combiTimeTable.columns[5]
+combiTimeTable.columns[6]
+combiTimeTable.columns[7]
+combiTimeTable.columns[8]
+combiTimeTable.columns[9]
+combiTimeTable.columns[10]
+combiTimeTable.columns[11]
+combiTimeTable.columns[12]
+combiTimeTable.columns[13]
+combiTimeTable.columns[14]
+combiTimeTable.smoothness
+combiTimeTable.extrapolation
+combiTimeTable.offset[1]
+combiTimeTable.startTime
+combiTimeTable.t_min
+combiTimeTable.t_max
+combiTimeTable.p_offset[1]
+combiTimeTable.p_offset[2]
+combiTimeTable.p_offset[3]
+combiTimeTable.p_offset[4]
+combiTimeTable.p_offset[5]
+combiTimeTable.p_offset[6]
+combiTimeTable.p_offset[7]
+combiTimeTable.p_offset[8]
+combiTimeTable.p_offset[9]
+combiTimeTable.p_offset[10]
+combiTimeTable.p_offset[11]
+combiTimeTable.p_offset[12]
+combiTimeTable.p_offset[13]
+combiTimeTable.p_offset[14]
+combiTimeTable.tableID.id
+combiTimeTable.nextTimeEvent
+combiTimeTable.tableOnFileRead
+
+double initialValue(820,6)
+ -1 6.7000000000000004E-001       0                       0                
+  1   280   # nitri1.Y_h
+ -1 2.3999999999999999E-001       0                       0                
+  1   280   # nitri1.Y_a
+ -1 8.0000000000000002E-002       0                       0                
+  1   280   # nitri1.f_p
+ -1 8.5999999999999993E-002       0                       0                
+  1   280   # nitri1.i_xb
+ -1 5.9999999999999998E-002       0                       0                
+  1   280   # nitri1.i_xp
+  0       0                       0                       0                
+  6   256   # nitri1.mu_h
+  0       0                       0                       0                
+  6   256   # nitri1.b_h
+  0       0                       0                       0                
+  6   256   # nitri1.mu_a
+  0       0                       0                       0                
+  6   256   # nitri1.b_a
+  0       0                       0                       0                
+  6   256   # nitri1.k_a
+  0       0                       0                       0                
+  6   256   # nitri1.k_h
+  0       0                       0                       0                
+  6   256   # nitri1.K_x
+ -1       4                       0                       0                
+  1   280   # nitri1.mu_h_T
+ -1 2.8000000000000003E-001       0                       0                
+  1   280   # nitri1.b_h_T
+ -1 5.0000000000000000E-001       0                       0                
+  1   280   # nitri1.mu_a_T
+ -1 1.0000000000000001E-001       0                       0                
+  1   280   # nitri1.b_a_T
+ -1 5.9999999999999998E-002       0                       0                
+  1   280   # nitri1.k_a_T
+ -1 1.7500000000000000E+000       0                       0                
+  1   280   # nitri1.k_h_T
+ -1 1.7500000000000002E-002       0                       0                
+  1   280   # nitri1.K_x_T
+ -1       1                       0                       0                
+  1   280   # nitri1.K_nh
+ -1      20                       0                       0                
+  1   280   # nitri1.K_s
+ -1 2.0000000000000001E-001       0                       0                
+  1   280   # nitri1.K_oh
+ -1 5.0000000000000000E-001       0                       0                
+  1   280   # nitri1.K_no
+ -1 4.0000000000000002E-001       0                       0                
+  1   280   # nitri1.K_oa
+ -1 8.0000000000000004E-001       0                       0                
+  1   280   # nitri1.ny_g
+ -1 4.0000000000000002E-001       0                       0                
+  1   280   # nitri1.ny_h
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri1.Si
+  0       0                       0                       0                
+  3   256   # nitri1.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri1.Ss
+  0       0                       0                       0                
+  3   256   # nitri1.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri1.Xi
+  0       0                       0                       0                
+  3   256   # nitri1.der(Xi)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri1.Xs
+  0       0                       0                       0                
+  3   256   # nitri1.der(Xs)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri1.Xbh
+  0       0                       0                       0                
+  3   256   # nitri1.der(Xbh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri1.Xba
+  0       0                       0                       0                
+  3   256   # nitri1.der(Xba)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri1.Xp
+  0       0                       0                       0                
+  3   256   # nitri1.der(Xp)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri1.So
+  0       0                       0                       0                
+  3   256   # nitri1.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri1.Sno
+  0       0                       0                       0                
+  3   256   # nitri1.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri1.Snh
+  0       0                       0                       0                
+  3   256   # nitri1.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri1.Snd
+  0       0                       0                       0                
+  3   256   # nitri1.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri1.Xnd
+  0       0                       0                       0                
+  3   256   # nitri1.der(Xnd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri1.Salk
+  0       0                       0                       0                
+  3   256   # nitri1.der(Salk)
+  0       0                       0                       0                
+  6   256   # nitri1.p1
+  0       0                       0                       0                
+  6   256   # nitri1.p2
+  0       0                       0                       0                
+  6   256   # nitri1.p3
+  0       0                       0                       0                
+  6   256   # nitri1.p4
+  0       0                       0                       0                
+  6   256   # nitri1.p5
+  0       0                       0                       0                
+  6   256   # nitri1.p6
+  0       0                       0                       0                
+  6   256   # nitri1.p7
+  0       0                       0                       0                
+  6   256   # nitri1.p8
+  0       0                       0                       0                
+  6   256   # nitri1.r1
+  0       0                       0                       0                
+  6   256   # nitri1.r2
+  0       0                       0                       0                
+  6   256   # nitri1.r3
+  0       0                       0                       0                
+  6   256   # nitri1.r4
+  0       0                       0                       0                
+  6   256   # nitri1.r5
+  0       0                       0                       0                
+  6   256   # nitri1.r6
+  0       0                       0                       0                
+  6   256   # nitri1.r7
+  0       0                       0                       0                
+  6   256   # nitri1.r8
+  0       0                       0                       0                
+  6   256   # nitri1.r9
+  0       0                       0                       0                
+  6   256   # nitri1.r10
+  0       0                       0                       0                
+  6   256   # nitri1.r11
+  0       0                       0                       0                
+  6   256   # nitri1.r12
+  0       0                       0                       0                
+  6   256   # nitri1.r13
+  0       0                       0                       0                
+  6   256   # nitri1.inputSs
+  0       0                       0                       0                
+  6   256   # nitri1.inputXs
+  0       0                       0                       0                
+  6   256   # nitri1.inputXbh
+  0       0                       0                       0                
+  6   256   # nitri1.inputXba
+  0       0                       0                       0                
+  6   256   # nitri1.inputXp
+  0       0                       0                       0                
+  6   256   # nitri1.inputSo
+  0       0                       0                       0                
+  6   256   # nitri1.inputSno
+  0       0                       0                       0                
+  6   256   # nitri1.inputSnh
+  0       0                       0                       0                
+  6   256   # nitri1.inputSnd
+  0       0                       0                       0                
+  6   256   # nitri1.inputXnd
+  0       0                       0                       0                
+  6   256   # nitri1.inputSalk
+  0       0                       0                       0                
+  6   256   # nitri1.aeration
+  0       0                       0                       0                
+  6   388   # nitri1.In.Q
+  0       0                       0                       0                
+  6   388   # nitri1.MeasurePort.Q
+ -1    1000                       0                       0                
+  1   280   # nitri1.V
+ -1 6.9999999999999996E-001       0                       0                
+  1   280   # nitri1.alpha
+ -1 4.5000000000000000E+000       0                       0                
+  1   280   # nitri1.de
+ -1 2.3500000000000000E+001       0                       0                
+  1   280   # nitri1.R_air
+  0       0                       0                 1.0000000000000000E+100
+  6   256   # nitri1.So_sat
+  0       0                       0                       0                
+  6   388   # nitri1.AirIn.Q_air
+ -1 6.7000000000000004E-001       0                       0                
+  1   280   # nitri2.Y_h
+ -1 2.3999999999999999E-001       0                       0                
+  1   280   # nitri2.Y_a
+ -1 8.0000000000000002E-002       0                       0                
+  1   280   # nitri2.f_p
+ -1 8.5999999999999993E-002       0                       0                
+  1   280   # nitri2.i_xb
+ -1 5.9999999999999998E-002       0                       0                
+  1   280   # nitri2.i_xp
+  0       0                       0                       0                
+  6   256   # nitri2.mu_h
+  0       0                       0                       0                
+  6   256   # nitri2.b_h
+  0       0                       0                       0                
+  6   256   # nitri2.mu_a
+  0       0                       0                       0                
+  6   256   # nitri2.b_a
+  0       0                       0                       0                
+  6   256   # nitri2.k_a
+  0       0                       0                       0                
+  6   256   # nitri2.k_h
+  0       0                       0                       0                
+  6   256   # nitri2.K_x
+ -1       4                       0                       0                
+  1   280   # nitri2.mu_h_T
+ -1 2.8000000000000003E-001       0                       0                
+  1   280   # nitri2.b_h_T
+ -1 5.0000000000000000E-001       0                       0                
+  1   280   # nitri2.mu_a_T
+ -1 1.0000000000000001E-001       0                       0                
+  1   280   # nitri2.b_a_T
+ -1 5.9999999999999998E-002       0                       0                
+  1   280   # nitri2.k_a_T
+ -1 1.7500000000000000E+000       0                       0                
+  1   280   # nitri2.k_h_T
+ -1 1.7500000000000002E-002       0                       0                
+  1   280   # nitri2.K_x_T
+ -1       1                       0                       0                
+  1   280   # nitri2.K_nh
+ -1      20                       0                       0                
+  1   280   # nitri2.K_s
+ -1 2.0000000000000001E-001       0                       0                
+  1   280   # nitri2.K_oh
+ -1 5.0000000000000000E-001       0                       0                
+  1   280   # nitri2.K_no
+ -1 4.0000000000000002E-001       0                       0                
+  1   280   # nitri2.K_oa
+ -1 8.0000000000000004E-001       0                       0                
+  1   280   # nitri2.ny_g
+ -1 4.0000000000000002E-001       0                       0                
+  1   280   # nitri2.ny_h
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri2.Si
+  0       0                       0                       0                
+  3   256   # nitri2.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri2.Ss
+  0       0                       0                       0                
+  3   256   # nitri2.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri2.Xi
+  0       0                       0                       0                
+  3   256   # nitri2.der(Xi)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri2.Xs
+  0       0                       0                       0                
+  3   256   # nitri2.der(Xs)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri2.Xbh
+  0       0                       0                       0                
+  3   256   # nitri2.der(Xbh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri2.Xba
+  0       0                       0                       0                
+  3   256   # nitri2.der(Xba)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri2.Xp
+  0       0                       0                       0                
+  3   256   # nitri2.der(Xp)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri2.So
+  0       0                       0                       0                
+  3   256   # nitri2.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri2.Sno
+  0       0                       0                       0                
+  3   256   # nitri2.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri2.Snh
+  0       0                       0                       0                
+  3   256   # nitri2.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri2.Snd
+  0       0                       0                       0                
+  3   256   # nitri2.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri2.Xnd
+  0       0                       0                       0                
+  3   256   # nitri2.der(Xnd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri2.Salk
+  0       0                       0                       0                
+  3   256   # nitri2.der(Salk)
+  0       0                       0                       0                
+  6   256   # nitri2.p1
+  0       0                       0                       0                
+  6   256   # nitri2.p2
+  0       0                       0                       0                
+  6   256   # nitri2.p3
+  0       0                       0                       0                
+  6   256   # nitri2.p4
+  0       0                       0                       0                
+  6   256   # nitri2.p5
+  0       0                       0                       0                
+  6   256   # nitri2.p6
+  0       0                       0                       0                
+  6   256   # nitri2.p7
+  0       0                       0                       0                
+  6   256   # nitri2.p8
+  0       0                       0                       0                
+  6   256   # nitri2.r1
+  0       0                       0                       0                
+  6   256   # nitri2.r2
+  0       0                       0                       0                
+  6   256   # nitri2.r3
+  0       0                       0                       0                
+  6   256   # nitri2.r4
+  0       0                       0                       0                
+  6   256   # nitri2.r5
+  0       0                       0                       0                
+  6   256   # nitri2.r6
+  0       0                       0                       0                
+  6   256   # nitri2.r7
+  0       0                       0                       0                
+  6   256   # nitri2.r8
+  0       0                       0                       0                
+  6   256   # nitri2.r9
+  0       0                       0                       0                
+  6   256   # nitri2.r10
+  0       0                       0                       0                
+  6   256   # nitri2.r11
+  0       0                       0                       0                
+  6   256   # nitri2.r12
+  0       0                       0                       0                
+  6   256   # nitri2.r13
+  0       0                       0                       0                
+  6   256   # nitri2.inputSs
+  0       0                       0                       0                
+  6   256   # nitri2.inputXs
+  0       0                       0                       0                
+  6   256   # nitri2.inputXbh
+  0       0                       0                       0                
+  6   256   # nitri2.inputXba
+  0       0                       0                       0                
+  6   256   # nitri2.inputXp
+  0       0                       0                       0                
+  6   256   # nitri2.inputSo
+  0       0                       0                       0                
+  6   256   # nitri2.inputSno
+  0       0                       0                       0                
+  6   256   # nitri2.inputSnh
+  0       0                       0                       0                
+  6   256   # nitri2.inputSnd
+  0       0                       0                       0                
+  6   256   # nitri2.inputXnd
+  0       0                       0                       0                
+  6   256   # nitri2.inputSalk
+  0       0                       0                       0                
+  6   256   # nitri2.aeration
+  0       0                       0                       0                
+  6   388   # nitri2.MeasurePort.Q
+ -1    1000                       0                       0                
+  1   280   # nitri2.V
+ -1 6.9999999999999996E-001       0                       0                
+  1   280   # nitri2.alpha
+ -1 4.5000000000000000E+000       0                       0                
+  1   280   # nitri2.de
+ -1 2.3500000000000000E+001       0                       0                
+  1   280   # nitri2.R_air
+  0       0                       0                 1.0000000000000000E+100
+  6   256   # nitri2.So_sat
+  0       0                       0                       0                
+  6   388   # nitri2.AirIn.Q_air
+ -1 6.7000000000000004E-001       0                       0                
+  1   280   # nitri3.Y_h
+ -1 2.3999999999999999E-001       0                       0                
+  1   280   # nitri3.Y_a
+ -1 8.0000000000000002E-002       0                       0                
+  1   280   # nitri3.f_p
+ -1 8.5999999999999993E-002       0                       0                
+  1   280   # nitri3.i_xb
+ -1 5.9999999999999998E-002       0                       0                
+  1   280   # nitri3.i_xp
+  0       0                       0                       0                
+  6   256   # nitri3.mu_h
+  0       0                       0                       0                
+  6   256   # nitri3.b_h
+  0       0                       0                       0                
+  6   256   # nitri3.mu_a
+  0       0                       0                       0                
+  6   256   # nitri3.b_a
+  0       0                       0                       0                
+  6   256   # nitri3.k_a
+  0       0                       0                       0                
+  6   256   # nitri3.k_h
+  0       0                       0                       0                
+  6   256   # nitri3.K_x
+ -1       4                       0                       0                
+  1   280   # nitri3.mu_h_T
+ -1 2.8000000000000003E-001       0                       0                
+  1   280   # nitri3.b_h_T
+ -1 5.0000000000000000E-001       0                       0                
+  1   280   # nitri3.mu_a_T
+ -1 1.0000000000000001E-001       0                       0                
+  1   280   # nitri3.b_a_T
+ -1 5.9999999999999998E-002       0                       0                
+  1   280   # nitri3.k_a_T
+ -1 1.7500000000000000E+000       0                       0                
+  1   280   # nitri3.k_h_T
+ -1 1.7500000000000002E-002       0                       0                
+  1   280   # nitri3.K_x_T
+ -1       1                       0                       0                
+  1   280   # nitri3.K_nh
+ -1      20                       0                       0                
+  1   280   # nitri3.K_s
+ -1 2.0000000000000001E-001       0                       0                
+  1   280   # nitri3.K_oh
+ -1 5.0000000000000000E-001       0                       0                
+  1   280   # nitri3.K_no
+ -1 4.0000000000000002E-001       0                       0                
+  1   280   # nitri3.K_oa
+ -1 8.0000000000000004E-001       0                       0                
+  1   280   # nitri3.ny_g
+ -1 4.0000000000000002E-001       0                       0                
+  1   280   # nitri3.ny_h
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri3.Si
+  0       0                       0                       0                
+  3   256   # nitri3.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri3.Ss
+  0       0                       0                       0                
+  3   256   # nitri3.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri3.Xi
+  0       0                       0                       0                
+  3   256   # nitri3.der(Xi)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri3.Xs
+  0       0                       0                       0                
+  3   256   # nitri3.der(Xs)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri3.Xbh
+  0       0                       0                       0                
+  3   256   # nitri3.der(Xbh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri3.Xba
+  0       0                       0                       0                
+  3   256   # nitri3.der(Xba)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri3.Xp
+  0       0                       0                       0                
+  3   256   # nitri3.der(Xp)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri3.So
+  0       0                       0                       0                
+  3   256   # nitri3.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri3.Sno
+  0       0                       0                       0                
+  3   256   # nitri3.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri3.Snh
+  0       0                       0                       0                
+  3   256   # nitri3.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri3.Snd
+  0       0                       0                       0                
+  3   256   # nitri3.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri3.Xnd
+  0       0                       0                       0                
+  3   256   # nitri3.der(Xnd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # nitri3.Salk
+  0       0                       0                       0                
+  3   256   # nitri3.der(Salk)
+  0       0                       0                       0                
+  6   256   # nitri3.p1
+  0       0                       0                       0                
+  6   256   # nitri3.p2
+  0       0                       0                       0                
+  6   256   # nitri3.p3
+  0       0                       0                       0                
+  6   256   # nitri3.p4
+  0       0                       0                       0                
+  6   256   # nitri3.p5
+  0       0                       0                       0                
+  6   256   # nitri3.p6
+  0       0                       0                       0                
+  6   256   # nitri3.p7
+  0       0                       0                       0                
+  6   256   # nitri3.p8
+  0       0                       0                       0                
+  6   256   # nitri3.r1
+  0       0                       0                       0                
+  6   256   # nitri3.r2
+  0       0                       0                       0                
+  6   256   # nitri3.r3
+  0       0                       0                       0                
+  6   256   # nitri3.r4
+  0       0                       0                       0                
+  6   256   # nitri3.r5
+  0       0                       0                       0                
+  6   256   # nitri3.r6
+  0       0                       0                       0                
+  6   256   # nitri3.r7
+  0       0                       0                       0                
+  6   256   # nitri3.r8
+  0       0                       0                       0                
+  6   256   # nitri3.r9
+  0       0                       0                       0                
+  6   256   # nitri3.r10
+  0       0                       0                       0                
+  6   256   # nitri3.r11
+  0       0                       0                       0                
+  6   256   # nitri3.r12
+  0       0                       0                       0                
+  6   256   # nitri3.r13
+  0       0                       0                       0                
+  6   256   # nitri3.inputSs
+  0       0                       0                       0                
+  6   256   # nitri3.inputXs
+  0       0                       0                       0                
+  6   256   # nitri3.inputXbh
+  0       0                       0                       0                
+  6   256   # nitri3.inputXba
+  0       0                       0                       0                
+  6   256   # nitri3.inputXp
+  0       0                       0                       0                
+  6   256   # nitri3.inputSo
+  0       0                       0                       0                
+  6   256   # nitri3.inputSno
+  0       0                       0                       0                
+  6   256   # nitri3.inputSnh
+  0       0                       0                       0                
+  6   256   # nitri3.inputSnd
+  0       0                       0                       0                
+  6   256   # nitri3.inputXnd
+  0       0                       0                       0                
+  6   256   # nitri3.inputSalk
+  0       0                       0                       0                
+  6   256   # nitri3.aeration
+  0       0                       0                       0                
+  6   388   # nitri3.MeasurePort.Q
+ -1    1000                       0                       0                
+  1   280   # nitri3.V
+ -1 6.9999999999999996E-001       0                       0                
+  1   280   # nitri3.alpha
+ -1 4.5000000000000000E+000       0                       0                
+  1   280   # nitri3.de
+ -1 2.3500000000000000E+001       0                       0                
+  1   280   # nitri3.R_air
+  0       0                       0                 1.0000000000000000E+100
+  6   256   # nitri3.So_sat
+  0       0                       0                       0                
+  6   388   # nitri3.AirIn.Q_air
+ -1 6.7000000000000004E-001       0                       0                
+  1   280   # deni1.Y_h
+ -1 2.3999999999999999E-001       0                       0                
+  1   280   # deni1.Y_a
+ -1 8.0000000000000002E-002       0                       0                
+  1   280   # deni1.f_p
+ -1 8.5999999999999993E-002       0                       0                
+  1   280   # deni1.i_xb
+ -1 5.9999999999999998E-002       0                       0                
+  1   280   # deni1.i_xp
+  0       0                       0                       0                
+  6   256   # deni1.mu_h
+  0       0                       0                       0                
+  6   256   # deni1.b_h
+  0       0                       0                       0                
+  6   256   # deni1.mu_a
+  0       0                       0                       0                
+  6   256   # deni1.b_a
+  0       0                       0                       0                
+  6   256   # deni1.k_a
+  0       0                       0                       0                
+  6   256   # deni1.k_h
+  0       0                       0                       0                
+  6   256   # deni1.K_x
+ -1       4                       0                       0                
+  1   280   # deni1.mu_h_T
+ -1 2.8000000000000003E-001       0                       0                
+  1   280   # deni1.b_h_T
+ -1 5.0000000000000000E-001       0                       0                
+  1   280   # deni1.mu_a_T
+ -1 1.0000000000000001E-001       0                       0                
+  1   280   # deni1.b_a_T
+ -1 5.9999999999999998E-002       0                       0                
+  1   280   # deni1.k_a_T
+ -1 1.7500000000000000E+000       0                       0                
+  1   280   # deni1.k_h_T
+ -1 1.7500000000000002E-002       0                       0                
+  1   280   # deni1.K_x_T
+ -1       1                       0                       0                
+  1   280   # deni1.K_nh
+ -1      20                       0                       0                
+  1   280   # deni1.K_s
+ -1 2.0000000000000001E-001       0                       0                
+  1   280   # deni1.K_oh
+ -1 5.0000000000000000E-001       0                       0                
+  1   280   # deni1.K_no
+ -1 4.0000000000000002E-001       0                       0                
+  1   280   # deni1.K_oa
+ -1 8.0000000000000004E-001       0                       0                
+  1   280   # deni1.ny_g
+ -1 4.0000000000000002E-001       0                       0                
+  1   280   # deni1.ny_h
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni1.Si
+  0       0                       0                       0                
+  3   256   # deni1.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni1.Ss
+  0       0                       0                       0                
+  3   256   # deni1.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni1.Xi
+  0       0                       0                       0                
+  3   256   # deni1.der(Xi)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni1.Xs
+  0       0                       0                       0                
+  3   256   # deni1.der(Xs)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni1.Xbh
+  0       0                       0                       0                
+  3   256   # deni1.der(Xbh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni1.Xba
+  0       0                       0                       0                
+  3   256   # deni1.der(Xba)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni1.Xp
+  0       0                       0                       0                
+  3   256   # deni1.der(Xp)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni1.So
+  0       0                       0                       0                
+  3   256   # deni1.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni1.Sno
+  0       0                       0                       0                
+  3   256   # deni1.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni1.Snh
+  0       0                       0                       0                
+  3   256   # deni1.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni1.Snd
+  0       0                       0                       0                
+  3   256   # deni1.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni1.Xnd
+  0       0                       0                       0                
+  3   256   # deni1.der(Xnd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni1.Salk
+  0       0                       0                       0                
+  3   256   # deni1.der(Salk)
+  0       0                       0                       0                
+  6   256   # deni1.p1
+  0       0                       0                       0                
+  6   256   # deni1.p2
+  0       0                       0                       0                
+  6   256   # deni1.p3
+  0       0                       0                       0                
+  6   256   # deni1.p4
+  0       0                       0                       0                
+  6   256   # deni1.p5
+  0       0                       0                       0                
+  6   256   # deni1.p6
+  0       0                       0                       0                
+  6   256   # deni1.p7
+  0       0                       0                       0                
+  6   256   # deni1.p8
+  0       0                       0                       0                
+  6   256   # deni1.r1
+  0       0                       0                       0                
+  6   256   # deni1.r2
+  0       0                       0                       0                
+  6   256   # deni1.r3
+  0       0                       0                       0                
+  6   256   # deni1.r4
+  0       0                       0                       0                
+  6   256   # deni1.r5
+  0       0                       0                       0                
+  6   256   # deni1.r6
+  0       0                       0                       0                
+  6   256   # deni1.r7
+  0       0                       0                       0                
+  6   256   # deni1.r8
+  0       0                       0                       0                
+  6   256   # deni1.r9
+  0       0                       0                       0                
+  6   256   # deni1.r10
+  0       0                       0                       0                
+  6   256   # deni1.r11
+  0       0                       0                       0                
+  6   256   # deni1.r12
+  0       0                       0                       0                
+  6   256   # deni1.r13
+  0       0                       0                       0                
+  6   256   # deni1.inputSs
+  0       0                       0                       0                
+  6   256   # deni1.inputXs
+  0       0                       0                       0                
+  6   256   # deni1.inputXbh
+  0       0                       0                       0                
+  6   256   # deni1.inputXba
+  0       0                       0                       0                
+  6   256   # deni1.inputXp
+  0       0                       0                       0                
+  6   256   # deni1.inputSo
+  0       0                       0                       0                
+  6   256   # deni1.inputSno
+  0       0                       0                       0                
+  6   256   # deni1.inputSnh
+  0       0                       0                       0                
+  6   256   # deni1.inputSnd
+  0       0                       0                       0                
+  6   256   # deni1.inputXnd
+  0       0                       0                       0                
+  6   256   # deni1.inputSalk
+  0       0                       0                       0                
+  6   256   # deni1.aeration
+  0       0                       0                       0                
+  6   388   # deni1.MeasurePort.Q
+ -1    1000                       0                       0                
+  1   280   # deni1.V
+ -1 6.7000000000000004E-001       0                       0                
+  1   280   # deni2.Y_h
+ -1 2.3999999999999999E-001       0                       0                
+  1   280   # deni2.Y_a
+ -1 8.0000000000000002E-002       0                       0                
+  1   280   # deni2.f_p
+ -1 8.5999999999999993E-002       0                       0                
+  1   280   # deni2.i_xb
+ -1 5.9999999999999998E-002       0                       0                
+  1   280   # deni2.i_xp
+  0       0                       0                       0                
+  6   256   # deni2.mu_h
+  0       0                       0                       0                
+  6   256   # deni2.b_h
+  0       0                       0                       0                
+  6   256   # deni2.mu_a
+  0       0                       0                       0                
+  6   256   # deni2.b_a
+  0       0                       0                       0                
+  6   256   # deni2.k_a
+  0       0                       0                       0                
+  6   256   # deni2.k_h
+  0       0                       0                       0                
+  6   256   # deni2.K_x
+ -1       4                       0                       0                
+  1   280   # deni2.mu_h_T
+ -1 2.8000000000000003E-001       0                       0                
+  1   280   # deni2.b_h_T
+ -1 5.0000000000000000E-001       0                       0                
+  1   280   # deni2.mu_a_T
+ -1 1.0000000000000001E-001       0                       0                
+  1   280   # deni2.b_a_T
+ -1 5.9999999999999998E-002       0                       0                
+  1   280   # deni2.k_a_T
+ -1 1.7500000000000000E+000       0                       0                
+  1   280   # deni2.k_h_T
+ -1 1.7500000000000002E-002       0                       0                
+  1   280   # deni2.K_x_T
+ -1       1                       0                       0                
+  1   280   # deni2.K_nh
+ -1      20                       0                       0                
+  1   280   # deni2.K_s
+ -1 2.0000000000000001E-001       0                       0                
+  1   280   # deni2.K_oh
+ -1 5.0000000000000000E-001       0                       0                
+  1   280   # deni2.K_no
+ -1 4.0000000000000002E-001       0                       0                
+  1   280   # deni2.K_oa
+ -1 8.0000000000000004E-001       0                       0                
+  1   280   # deni2.ny_g
+ -1 4.0000000000000002E-001       0                       0                
+  1   280   # deni2.ny_h
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni2.Si
+  0       0                       0                       0                
+  3   256   # deni2.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni2.Ss
+  0       0                       0                       0                
+  3   256   # deni2.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni2.Xi
+  0       0                       0                       0                
+  3   256   # deni2.der(Xi)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni2.Xs
+  0       0                       0                       0                
+  3   256   # deni2.der(Xs)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni2.Xbh
+  0       0                       0                       0                
+  3   256   # deni2.der(Xbh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni2.Xba
+  0       0                       0                       0                
+  3   256   # deni2.der(Xba)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni2.Xp
+  0       0                       0                       0                
+  3   256   # deni2.der(Xp)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni2.So
+  0       0                       0                       0                
+  3   256   # deni2.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni2.Sno
+  0       0                       0                       0                
+  3   256   # deni2.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni2.Snh
+  0       0                       0                       0                
+  3   256   # deni2.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni2.Snd
+  0       0                       0                       0                
+  3   256   # deni2.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni2.Xnd
+  0       0                       0                       0                
+  3   256   # deni2.der(Xnd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # deni2.Salk
+  0       0                       0                       0                
+  3   256   # deni2.der(Salk)
+  0       0                       0                       0                
+  6   256   # deni2.p1
+  0       0                       0                       0                
+  6   256   # deni2.p2
+  0       0                       0                       0                
+  6   256   # deni2.p3
+  0       0                       0                       0                
+  6   256   # deni2.p4
+  0       0                       0                       0                
+  6   256   # deni2.p5
+  0       0                       0                       0                
+  6   256   # deni2.p6
+  0       0                       0                       0                
+  6   256   # deni2.p7
+  0       0                       0                       0                
+  6   256   # deni2.p8
+  0       0                       0                       0                
+  6   256   # deni2.r1
+  0       0                       0                       0                
+  6   256   # deni2.r2
+  0       0                       0                       0                
+  6   256   # deni2.r3
+  0       0                       0                       0                
+  6   256   # deni2.r4
+  0       0                       0                       0                
+  6   256   # deni2.r5
+  0       0                       0                       0                
+  6   256   # deni2.r6
+  0       0                       0                       0                
+  6   256   # deni2.r7
+  0       0                       0                       0                
+  6   256   # deni2.r8
+  0       0                       0                       0                
+  6   256   # deni2.r9
+  0       0                       0                       0                
+  6   256   # deni2.r10
+  0       0                       0                       0                
+  6   256   # deni2.r11
+  0       0                       0                       0                
+  6   256   # deni2.r12
+  0       0                       0                       0                
+  6   256   # deni2.r13
+  0       0                       0                       0                
+  6   256   # deni2.inputSs
+  0       0                       0                       0                
+  6   256   # deni2.inputXs
+  0       0                       0                       0                
+  6   256   # deni2.inputXbh
+  0       0                       0                       0                
+  6   256   # deni2.inputXba
+  0       0                       0                       0                
+  6   256   # deni2.inputXp
+  0       0                       0                       0                
+  6   256   # deni2.inputSo
+  0       0                       0                       0                
+  6   256   # deni2.inputSno
+  0       0                       0                       0                
+  6   256   # deni2.inputSnh
+  0       0                       0                       0                
+  6   256   # deni2.inputSnd
+  0       0                       0                       0                
+  6   256   # deni2.inputXnd
+  0       0                       0                       0                
+  6   256   # deni2.inputSalk
+  0       0                       0                       0                
+  6   256   # deni2.aeration
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # deni2.In.Si
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # deni2.In.Ss
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # deni2.In.Xi
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # deni2.In.Xs
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # deni2.In.Xbh
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # deni2.In.Xba
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # deni2.In.Xp
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # deni2.In.So
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # deni2.In.Sno
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # deni2.In.Snh
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # deni2.In.Snd
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # deni2.In.Xnd
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # deni2.In.Salk
+  0       0                       0                       0                
+  6   388   # deni2.MeasurePort.Q
+ -1    1000                       0                       0                
+  1   280   # deni2.V
+  0       0                       0                       0                
+  6   388   # wWSource.Out.Q
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # wWSource.Out.Si
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # wWSource.Out.Ss
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # wWSource.Out.Xi
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # wWSource.Out.Xs
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # wWSource.Out.Xbh
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # wWSource.Out.Xba
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # wWSource.Out.Xp
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # wWSource.Out.So
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # wWSource.Out.Sno
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # wWSource.Out.Snh
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # wWSource.Out.Snd
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # wWSource.Out.Xnd
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # wWSource.Out.Salk
+  0       0                       0                       0                
+  6   388   # mixer2_1.In2.Q
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_1.In2.Si
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_1.In2.Ss
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_1.In2.Xi
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_1.In2.Xs
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_1.In2.Xbh
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_1.In2.Xba
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_1.In2.Xp
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_1.In2.So
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_1.In2.Sno
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_1.In2.Snh
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_1.In2.Snd
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_1.In2.Xnd
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_1.In2.Salk
+  0       0                       0                       0                
+  6   388   # mixer2_2.In1.Q
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_2.In1.Xi
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_2.In1.Xs
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_2.In1.Xbh
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_2.In1.Xba
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_2.In1.Xp
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # mixer2_2.In1.Xnd
+  0       0                       0                       0                
+  6   388   # mixer2_2.In2.Q
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.rXi
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.rXs
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.rXbh
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.rXba
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.rXp
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.rXnd
+ -1       4                       0                       0                
+  1   280   # secClarModTakacs.hsc
+ -1      10                       0                       0                
+  1   282   # secClarModTakacs.n
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.zm
+ -1    1500                       0                       0                
+  1   280   # secClarModTakacs.Asc
+ -1    3000                       0                 1.0000000000000000E+100
+  1   280   # secClarModTakacs.Xt
+  0       0                       0                 1.0000000000000000E+100
+  6   256   # secClarModTakacs.Xf
+  0       0                       0                       0                
+  6   388   # secClarModTakacs.Feed.Q
+  0       0                       0                       0                
+  6   388   # secClarModTakacs.Effluent.Q
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # secClarModTakacs.Effluent.Xi
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # secClarModTakacs.Effluent.Xs
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # secClarModTakacs.Effluent.Xbh
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # secClarModTakacs.Effluent.Xba
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # secClarModTakacs.Effluent.Xp
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # secClarModTakacs.Effluent.Xnd
+  0       0                       0                       0                
+  6   388   # secClarModTakacs.Waste.Q
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # secClarModTakacs.Waste.Xi
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # secClarModTakacs.Waste.Xs
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # secClarModTakacs.Waste.Xbh
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # secClarModTakacs.Waste.Xba
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # secClarModTakacs.Waste.Xp
+  0       0                       0                 1.0000000000000000E+100
+  6   260   # secClarModTakacs.Waste.Xnd
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S1.zm
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S1.Asc
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S1.X
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S1.der(X)
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S1.vS
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S1.Jsm
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S1.Si
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S1.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S1.Ss
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S1.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S1.So
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S1.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S1.Sno
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S1.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S1.Snh
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S1.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S1.Snd
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S1.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S1.Salk
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S1.der(Salk)
+  0       0                       0                       0                
+  6   388   # secClarModTakacs.S1.Up.SedFlux
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S2.zm
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S2.Asc
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S2.X
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S2.der(X)
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S2.vS
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S2.Si
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S2.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S2.Ss
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S2.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S2.So
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S2.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S2.Sno
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S2.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S2.Snh
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S2.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S2.Snd
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S2.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S2.Salk
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S2.der(Salk)
+  0       0                       0                       0                
+  6   388   # secClarModTakacs.S2.Up.SedFlux
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S3.zm
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S3.Asc
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S3.X
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S3.der(X)
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S3.vS
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S3.Si
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S3.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S3.Ss
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S3.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S3.So
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S3.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S3.Sno
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S3.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S3.Snh
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S3.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S3.Snd
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S3.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S3.Salk
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S3.der(Salk)
+  0       0                       0                       0                
+  6   388   # secClarModTakacs.S3.Up.SedFlux
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S4.zm
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S4.Asc
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S4.X
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S4.der(X)
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S4.vS
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S4.Si
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S4.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S4.Ss
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S4.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S4.So
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S4.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S4.Sno
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S4.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S4.Snh
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S4.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S4.Snd
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S4.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S4.Salk
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S4.der(Salk)
+  0       0                       0                       0                
+  6   388   # secClarModTakacs.S4.Up.SedFlux
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S5.zm
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S5.Asc
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S5.X
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S5.der(X)
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S5.vS
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S5.Si
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S5.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S5.Ss
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S5.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S5.So
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S5.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S5.Sno
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S5.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S5.Snh
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S5.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S5.Snd
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S5.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S5.Salk
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S5.der(Salk)
+  0       0                       0                       0                
+  6   388   # secClarModTakacs.S5.Up.SedFlux
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S6.zm
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S6.Asc
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S6.X
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S6.der(X)
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S6.vS
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S6.Si
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S6.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S6.Ss
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S6.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S6.So
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S6.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S6.Sno
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S6.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S6.Snh
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S6.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S6.Snd
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S6.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S6.Salk
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S6.der(Salk)
+  0       0                       0                       0                
+  6   388   # secClarModTakacs.S6.Up.SedFlux
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S7.zm
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S7.Asc
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S7.X
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S7.der(X)
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S7.vS
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S7.Si
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S7.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S7.Ss
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S7.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S7.So
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S7.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S7.Sno
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S7.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S7.Snh
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S7.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S7.Snd
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S7.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S7.Salk
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S7.der(Salk)
+  0       0                       0                 1.0000000000000000E+100
+  6   256   # secClarModTakacs.S7.Xt
+  0       0                       0                       0                
+  6   388   # secClarModTakacs.S7.Up.SedFlux
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S8.zm
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S8.Asc
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S8.X
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S8.der(X)
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S8.vS
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S8.Si
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S8.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S8.Ss
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S8.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S8.So
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S8.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S8.Sno
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S8.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S8.Snh
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S8.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S8.Snd
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S8.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S8.Salk
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S8.der(Salk)
+  0       0                       0                 1.0000000000000000E+100
+  6   256   # secClarModTakacs.S8.Xt
+  0       0                       0                       0                
+  6   388   # secClarModTakacs.S8.Up.SedFlux
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S9.zm
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S9.Asc
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S9.X
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S9.der(X)
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S9.vS
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S9.Si
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S9.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S9.Ss
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S9.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S9.So
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S9.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S9.Sno
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S9.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S9.Snh
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S9.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S9.Snd
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S9.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S9.Salk
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S9.der(Salk)
+  0       0                       0                 1.0000000000000000E+100
+  6   256   # secClarModTakacs.S9.Xt
+  0       0                       0                       0                
+  6   388   # secClarModTakacs.S9.Up.SedFlux
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S10.zm
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S10.Asc
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S10.X
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S10.der(X)
+  0       0                       0                       0                
+  6   256   # secClarModTakacs.S10.vS
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S10.Si
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S10.der(Si)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S10.Ss
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S10.der(Ss)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S10.So
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S10.der(So)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S10.Sno
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S10.der(Sno)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S10.Snh
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S10.der(Snh)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S10.Snd
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S10.der(Snd)
+ -1       0                       0                 1.0000000000000000E+100
+  2   280   # secClarModTakacs.S10.Salk
+  0       0                       0                       0                
+  3   256   # secClarModTakacs.S10.der(Salk)
+  0       0                       0                 1.0000000000000000E+100
+  6   256   # secClarModTakacs.S10.Xt
+ -1   20000                       0                       0                
+  1   280   # blower1.Q_max
+ -1       0                       0                       0                
+  1   280   # blower1.Q_min
+  0       0                       0                       0                
+  6   256   # blower1.H
+ -1   20000                       0                       0                
+  1   280   # blower2.Q_max
+ -1       0                       0                       0                
+  1   280   # blower2.Q_min
+  0       0                       0                       0                
+  6   256   # blower2.H
+ -1   20000                       0                       0                
+  1   280   # blower3.Q_max
+ -1       0                       0                       0                
+  1   280   # blower3.Q_min
+  0       0                       0                       0                
+  6   256   # blower3.H
+  0       0                       0                       0                
+  6   256   # blower3.u
+ -1      25                       0                       0                
+  1   280   # PI.k
+ -1 2.0000000000000000E-003 9.9999999999999997E-061 1.0000000000000000E+100
+  1   280   # PI.T
+  0       1                       1                       4                
+  6   258   # PI.initType
+ -1       0                       0                       0                
+  1   280   # PI.x_start
+ -1       0                       0                       0                
+  1   280   # PI.y_start
+  0       0                       0                       0                
+  6   256   # PI.u
+ -1       0                       0                       0                
+  2   272   # PI.x
+  0       0                       0                       0                
+  3   256   # PI.der(x)
+  0       0                       0                       0                
+  6   320   # feedback.u1
+ -1 1.5000000000000000E+000       0                       0                
+  1   280   # step.height
+ -1       0                       0                       0                
+  1   280   # step.offset
+ -1       0                       0                       0                
+  1   280   # step.startTime
+ -1       0                       0                       0                
+  1   280   # pump2.Q_min
+ -1   20000                       0                       0                
+  1   280   # pump2.Q_max
+  0       0                       0                       0                
+  6   256   # pump2.H
+ -1       0                       0                       0                
+  1   280   # pump3.Q_min
+ -1   20000                       0                       0                
+  1   280   # pump3.Q_max
+  0       0                       0                       0                
+  6   256   # pump3.H
+  0       0                       0                       0                
+  6   256   # pump3.u
+  0       0                       0                       0                
+  6   388   # sensor_O2_1.In.Q
+  0       0                       0                       0                
+  6   388   # sensor_NO1.In.Q
+ -1 1.5000000000000000E+000       0                       0                
+  1   280   # step1.height
+  0       0                       0                       0                
+  6   320   # step1.y
+ -1       0                       0                       0                
+  1   280   # step1.offset
+ -1       0                       0                       0                
+  1   280   # step1.startTime
+  0       0                       0                       0                
+  6   256   # feedback1.y
+ -1   10000                       0                       0                
+  1   280   # PI1.k
+ -1 2.5000000000000001E-002 9.9999999999999997E-061 1.0000000000000000E+100
+  1   280   # PI1.T
+  0       1                       1                       4                
+  6   258   # PI1.initType
+ -1       0                       0                       0                
+  1   280   # PI1.x_start
+ -1       0                       0                       0                
+  1   280   # PI1.y_start
+ -1       0                       0                       0                
+  2   272   # PI1.x
+  0       0                       0                       0                
+  3   256   # PI1.der(x)
+ -1       1                       0                       0                
+  1   280   # constant_B2.k
+ -1       0                       0                       0                
+  1   280   # pump1.Q_min
+ -1   20000                       0                       0                
+  1   280   # pump1.Q_max
+  0       0                       0                       0                
+  6   256   # pump1.H
+ -1      15                       0                       0                
+  1   280   # Temperatur.k
+ -1       1                       0                       0                
+  1   280   # constant_B.k
+  0      14                       1                 1.0000000000000000E+100
+  6   258   # combiTimeTable.nout
+  0       1                       0                       0                
+  6   257   # combiTimeTable.tableOnFile
+ -1       1                       0                       0                
+  1   281   # combiTimeTable.verboseRead
+ -1       2                       0                       0                
+  1   282   # combiTimeTable.columns[1]
+ -1       3                       0                       0                
+  1   282   # combiTimeTable.columns[2]
+ -1       4                       0                       0                
+  1   282   # combiTimeTable.columns[3]
+ -1       5                       0                       0                
+  1   282   # combiTimeTable.columns[4]
+ -1       6                       0                       0                
+  1   282   # combiTimeTable.columns[5]
+ -1       7                       0                       0                
+  1   282   # combiTimeTable.columns[6]
+ -1       8                       0                       0                
+  1   282   # combiTimeTable.columns[7]
+ -1       9                       0                       0                
+  1   282   # combiTimeTable.columns[8]
+ -1      10                       0                       0                
+  1   282   # combiTimeTable.columns[9]
+ -1      11                       0                       0                
+  1   282   # combiTimeTable.columns[10]
+ -1      12                       0                       0                
+  1   282   # combiTimeTable.columns[11]
+ -1      13                       0                       0                
+  1   282   # combiTimeTable.columns[12]
+ -1      14                       0                       0                
+  1   282   # combiTimeTable.columns[13]
+ -1      15                       0                       0                
+  1   282   # combiTimeTable.columns[14]
+  0       1                       1                       3                
+  6   258   # combiTimeTable.smoothness
+ -1       2                       1                       4                
+  1   282   # combiTimeTable.extrapolation
+ -1       0                       0                       0                
+  1   280   # combiTimeTable.offset[1]
+ -1       0                       0                       0                
+  1   280   # combiTimeTable.startTime
+  0       0                       0                       0                
+  6   256   # combiTimeTable.t_min
+  0       0                       0                       0                
+  6   256   # combiTimeTable.t_max
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.p_offset[1]
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.p_offset[2]
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.p_offset[3]
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.p_offset[4]
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.p_offset[5]
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.p_offset[6]
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.p_offset[7]
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.p_offset[8]
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.p_offset[9]
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.p_offset[10]
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.p_offset[11]
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.p_offset[12]
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.p_offset[13]
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.p_offset[14]
+  0       0                       0                       0                
+  6  1282   # combiTimeTable.tableID.id
+  0       0                       0                       0                
+  6  1352   # combiTimeTable.nextTimeEvent
+  0       0                       0                       0                
+  6  1280   # combiTimeTable.tableOnFileRead
+
+
+# Matrix with 6 columns defining the initial value calculation
+# (columns 5 and 6 are not utilized for the calculation but are
+#  reported by dymosim via dymosim -i for user convenience):
+#
+# column 1: Type of initial value
+#           = -2: special case: for continuing simulation (column 2 = value)
+#           = -1: fixed value (column 2 = fixed value)
+#           =  0: free value, i.e., no restriction (column 2 = initial value)
+#           >  0: desired value (column 1 = weight for optimization
+#                                column 2 = desired value)
+#                 use weight=1, since automatic scaling usually
+#                 leads to equally weighted terms
+# column 2: fixed, free or desired value according to column 1.
+# column 3: Minimum value (ignored, if Minimum >= Maximum).
+# column 4: Maximum value (ignored, if Minimum >= Maximum).
+#           Minimum and maximum restrict the search range in initial
+#           value calculation. They might also be used for scaling.
+# column 5: Category of variable.
+#           = 1: parameter.
+#           = 2: state.
+#           = 3: state derivative.
+#           = 4: output.
+#           = 5: input.
+#           = 6: auxiliary variable.
+# column 6: Data type of variable.
+#           = 0: real.
+#           = 1: boolean.
+#           = 2: integer.
+#
+# Initial values are calculated according to the following procedure:
+#
+# - If parameters, states and inputs are FIXED, and other variables
+#   are FREE, no special action takes place (default setting).
+#
+# - If there are only FIXED and FREE variables and the number of
+#   FREE parameters, states and inputs is IDENTICAL to the number of
+#   FIXED state derivatives, outputs and auxiliary variables, a non-linear
+#   equation is solved to determine a consistent set of initial conditions.
+#
+# - In all other cases the following optimization problem is solved:
+#      min( sum( weight(i)*( (value(i) - DESIRED(i))/scale(i) )^2 ) )
+#   under the constraint that the differential equation is fulfilled
+#   at the initial time. In most cases weight(i)=1 is sufficient, due
+#   to the automatic scaling (if DESIRED(i) is not close to zero,
+#   scale(i) = DESIRED(i). Otherwise, the scaling is based on the
+#   nominal value (and maybe minimum and maximum values given in 
+#   column 3 and 4). If these values are zero, scale(i)=1 is used).
+#
+char initialDescription(820,127)
+Heterotrophic Yield [g Xbh COD formed/(g COD utilised)] []
+Autotrophic Yield [g Xba COD formed/(g N utilised)] []
+Fraction of biomass to particulate products [-] []
+Fraction nitrogen in biomass [g N/(g COD)] []
+Fraction nitrogen in particulate products [g N/(g COD)] []
+Maximum heterotrophic growth rate f(T) [day^-1] []
+Heterotrophic decay rate f(T) [day^-1] []
+Maximum autotrophic growth rate f(T) [day^-1] []
+Autotrophic decay rate f(T) [day^-1] []
+Ammonification rate f(T) [m3/(g COD day)] []
+Maximum specific hydrolysis rate f(T) [g Xs/(g Xbh COD day)] []
+Half-saturation (hydrolysis) f(T) [g Xs/(g Xbh COD)] []
+Maximum heterotrophic growth rate at T=15 deg C [day^-1] []
+Heterotrophic decay rate at T=15 deg C [day^-1] []
+Maximum autotrophic growth rate at T=15 deg C[day^-1] []
+Autotrophic decay rate at T=15 deg C [day^-1] []
+Ammonification rate at T=15 deg C [m3/(g COD day)] []
+Maximum specific hydrolysis rate at T=15 deg C [g Xs/(g Xbh COD day)] []
+Half-saturation (hydrolysis) at T=15 deg C [g Xs/(g Xbh COD)] []
+Half-saturation (auto. growth) [g NH-N/m3] []
+Half-saturation (hetero. growth) [g COD/m3] []
+Half-saturation (hetero. oxygen) [g O/m3] []
+Half-saturation (nitrate) [g NO-N/m3] []
+Half-saturation (auto. oxygen) [g O/m3] []
+Anoxic growth rate correction factor [-] []
+Anoxic hydrolysis rate correction factor [-] []
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Particulate inert organic matter [mg/l]
+der(Particulate inert organic matter) [mg/(l.s)]
+Slowly biodegradable substrate [mg/l]
+der(Slowly biodegradable substrate) [mg/(l.s)]
+Active heterotrophic biomass [mg/l]
+der(Active heterotrophic biomass) [mg/(l.s)]
+Active autotrophic biomass [mg/l]
+der(Active autotrophic biomass) [mg/(l.s)]
+Particulate products from biomass decay [mg/l]
+der(Particulate products from biomass decay) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Particulate biodegradable organic nitrogen [mg/l]
+der(Particulate biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[m3/d]
+[m3/d]
+Volume of nitrification tank [m3]
+Oxygen transfer factor
+depth of aeration [m]
+specific oxygen feed factor [gO2/(m^3*m)] []
+Dissolved oxygen saturation [mg/l]
+[m3/d]
+Heterotrophic Yield [g Xbh COD formed/(g COD utilised)] []
+Autotrophic Yield [g Xba COD formed/(g N utilised)] []
+Fraction of biomass to particulate products [-] []
+Fraction nitrogen in biomass [g N/(g COD)] []
+Fraction nitrogen in particulate products [g N/(g COD)] []
+Maximum heterotrophic growth rate f(T) [day^-1] []
+Heterotrophic decay rate f(T) [day^-1] []
+Maximum autotrophic growth rate f(T) [day^-1] []
+Autotrophic decay rate f(T) [day^-1] []
+Ammonification rate f(T) [m3/(g COD day)] []
+Maximum specific hydrolysis rate f(T) [g Xs/(g Xbh COD day)] []
+Half-saturation (hydrolysis) f(T) [g Xs/(g Xbh COD)] []
+Maximum heterotrophic growth rate at T=15 deg C [day^-1] []
+Heterotrophic decay rate at T=15 deg C [day^-1] []
+Maximum autotrophic growth rate at T=15 deg C[day^-1] []
+Autotrophic decay rate at T=15 deg C [day^-1] []
+Ammonification rate at T=15 deg C [m3/(g COD day)] []
+Maximum specific hydrolysis rate at T=15 deg C [g Xs/(g Xbh COD day)] []
+Half-saturation (hydrolysis) at T=15 deg C [g Xs/(g Xbh COD)] []
+Half-saturation (auto. growth) [g NH-N/m3] []
+Half-saturation (hetero. growth) [g COD/m3] []
+Half-saturation (hetero. oxygen) [g O/m3] []
+Half-saturation (nitrate) [g NO-N/m3] []
+Half-saturation (auto. oxygen) [g O/m3] []
+Anoxic growth rate correction factor [-] []
+Anoxic hydrolysis rate correction factor [-] []
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Particulate inert organic matter [mg/l]
+der(Particulate inert organic matter) [mg/(l.s)]
+Slowly biodegradable substrate [mg/l]
+der(Slowly biodegradable substrate) [mg/(l.s)]
+Active heterotrophic biomass [mg/l]
+der(Active heterotrophic biomass) [mg/(l.s)]
+Active autotrophic biomass [mg/l]
+der(Active autotrophic biomass) [mg/(l.s)]
+Particulate products from biomass decay [mg/l]
+der(Particulate products from biomass decay) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Particulate biodegradable organic nitrogen [mg/l]
+der(Particulate biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[m3/d]
+Volume of nitrification tank [m3]
+Oxygen transfer factor
+depth of aeration [m]
+specific oxygen feed factor [gO2/(m^3*m)] []
+Dissolved oxygen saturation [mg/l]
+[m3/d]
+Heterotrophic Yield [g Xbh COD formed/(g COD utilised)] []
+Autotrophic Yield [g Xba COD formed/(g N utilised)] []
+Fraction of biomass to particulate products [-] []
+Fraction nitrogen in biomass [g N/(g COD)] []
+Fraction nitrogen in particulate products [g N/(g COD)] []
+Maximum heterotrophic growth rate f(T) [day^-1] []
+Heterotrophic decay rate f(T) [day^-1] []
+Maximum autotrophic growth rate f(T) [day^-1] []
+Autotrophic decay rate f(T) [day^-1] []
+Ammonification rate f(T) [m3/(g COD day)] []
+Maximum specific hydrolysis rate f(T) [g Xs/(g Xbh COD day)] []
+Half-saturation (hydrolysis) f(T) [g Xs/(g Xbh COD)] []
+Maximum heterotrophic growth rate at T=15 deg C [day^-1] []
+Heterotrophic decay rate at T=15 deg C [day^-1] []
+Maximum autotrophic growth rate at T=15 deg C[day^-1] []
+Autotrophic decay rate at T=15 deg C [day^-1] []
+Ammonification rate at T=15 deg C [m3/(g COD day)] []
+Maximum specific hydrolysis rate at T=15 deg C [g Xs/(g Xbh COD day)] []
+Half-saturation (hydrolysis) at T=15 deg C [g Xs/(g Xbh COD)] []
+Half-saturation (auto. growth) [g NH-N/m3] []
+Half-saturation (hetero. growth) [g COD/m3] []
+Half-saturation (hetero. oxygen) [g O/m3] []
+Half-saturation (nitrate) [g NO-N/m3] []
+Half-saturation (auto. oxygen) [g O/m3] []
+Anoxic growth rate correction factor [-] []
+Anoxic hydrolysis rate correction factor [-] []
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Particulate inert organic matter [mg/l]
+der(Particulate inert organic matter) [mg/(l.s)]
+Slowly biodegradable substrate [mg/l]
+der(Slowly biodegradable substrate) [mg/(l.s)]
+Active heterotrophic biomass [mg/l]
+der(Active heterotrophic biomass) [mg/(l.s)]
+Active autotrophic biomass [mg/l]
+der(Active autotrophic biomass) [mg/(l.s)]
+Particulate products from biomass decay [mg/l]
+der(Particulate products from biomass decay) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Particulate biodegradable organic nitrogen [mg/l]
+der(Particulate biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[m3/d]
+Volume of nitrification tank [m3]
+Oxygen transfer factor
+depth of aeration [m]
+specific oxygen feed factor [gO2/(m^3*m)] []
+Dissolved oxygen saturation [mg/l]
+[m3/d]
+Heterotrophic Yield [g Xbh COD formed/(g COD utilised)] []
+Autotrophic Yield [g Xba COD formed/(g N utilised)] []
+Fraction of biomass to particulate products [-] []
+Fraction nitrogen in biomass [g N/(g COD)] []
+Fraction nitrogen in particulate products [g N/(g COD)] []
+Maximum heterotrophic growth rate f(T) [day^-1] []
+Heterotrophic decay rate f(T) [day^-1] []
+Maximum autotrophic growth rate f(T) [day^-1] []
+Autotrophic decay rate f(T) [day^-1] []
+Ammonification rate f(T) [m3/(g COD day)] []
+Maximum specific hydrolysis rate f(T) [g Xs/(g Xbh COD day)] []
+Half-saturation (hydrolysis) f(T) [g Xs/(g Xbh COD)] []
+Maximum heterotrophic growth rate at T=15 deg C [day^-1] []
+Heterotrophic decay rate at T=15 deg C [day^-1] []
+Maximum autotrophic growth rate at T=15 deg C[day^-1] []
+Autotrophic decay rate at T=15 deg C [day^-1] []
+Ammonification rate at T=15 deg C [m3/(g COD day)] []
+Maximum specific hydrolysis rate at T=15 deg C [g Xs/(g Xbh COD day)] []
+Half-saturation (hydrolysis) at T=15 deg C [g Xs/(g Xbh COD)] []
+Half-saturation (auto. growth) [g NH-N/m3] []
+Half-saturation (hetero. growth) [g COD/m3] []
+Half-saturation (hetero. oxygen) [g O/m3] []
+Half-saturation (nitrate) [g NO-N/m3] []
+Half-saturation (auto. oxygen) [g O/m3] []
+Anoxic growth rate correction factor [-] []
+Anoxic hydrolysis rate correction factor [-] []
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Particulate inert organic matter [mg/l]
+der(Particulate inert organic matter) [mg/(l.s)]
+Slowly biodegradable substrate [mg/l]
+der(Slowly biodegradable substrate) [mg/(l.s)]
+Active heterotrophic biomass [mg/l]
+der(Active heterotrophic biomass) [mg/(l.s)]
+Active autotrophic biomass [mg/l]
+der(Active autotrophic biomass) [mg/(l.s)]
+Particulate products from biomass decay [mg/l]
+der(Particulate products from biomass decay) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Particulate biodegradable organic nitrogen [mg/l]
+der(Particulate biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[m3/d]
+Volume of denitrification tank [m3]
+Heterotrophic Yield [g Xbh COD formed/(g COD utilised)] []
+Autotrophic Yield [g Xba COD formed/(g N utilised)] []
+Fraction of biomass to particulate products [-] []
+Fraction nitrogen in biomass [g N/(g COD)] []
+Fraction nitrogen in particulate products [g N/(g COD)] []
+Maximum heterotrophic growth rate f(T) [day^-1] []
+Heterotrophic decay rate f(T) [day^-1] []
+Maximum autotrophic growth rate f(T) [day^-1] []
+Autotrophic decay rate f(T) [day^-1] []
+Ammonification rate f(T) [m3/(g COD day)] []
+Maximum specific hydrolysis rate f(T) [g Xs/(g Xbh COD day)] []
+Half-saturation (hydrolysis) f(T) [g Xs/(g Xbh COD)] []
+Maximum heterotrophic growth rate at T=15 deg C [day^-1] []
+Heterotrophic decay rate at T=15 deg C [day^-1] []
+Maximum autotrophic growth rate at T=15 deg C[day^-1] []
+Autotrophic decay rate at T=15 deg C [day^-1] []
+Ammonification rate at T=15 deg C [m3/(g COD day)] []
+Maximum specific hydrolysis rate at T=15 deg C [g Xs/(g Xbh COD day)] []
+Half-saturation (hydrolysis) at T=15 deg C [g Xs/(g Xbh COD)] []
+Half-saturation (auto. growth) [g NH-N/m3] []
+Half-saturation (hetero. growth) [g COD/m3] []
+Half-saturation (hetero. oxygen) [g O/m3] []
+Half-saturation (nitrate) [g NO-N/m3] []
+Half-saturation (auto. oxygen) [g O/m3] []
+Anoxic growth rate correction factor [-] []
+Anoxic hydrolysis rate correction factor [-] []
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Particulate inert organic matter [mg/l]
+der(Particulate inert organic matter) [mg/(l.s)]
+Slowly biodegradable substrate [mg/l]
+der(Slowly biodegradable substrate) [mg/(l.s)]
+Active heterotrophic biomass [mg/l]
+der(Active heterotrophic biomass) [mg/(l.s)]
+Active autotrophic biomass [mg/l]
+der(Active autotrophic biomass) [mg/(l.s)]
+Particulate products from biomass decay [mg/l]
+der(Particulate products from biomass decay) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Particulate biodegradable organic nitrogen [mg/l]
+der(Particulate biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mmol/l]
+[m3/d]
+Volume of denitrification tank [m3]
+[m3/d]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mmol/l]
+[m3/d]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mmol/l]
+[m3/d]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[m3/d]
+
+
+
+
+
+
+height of secondary clarifier [m]
+number of layers of SC model [:#(type=Integer)]
+height of m-th secondary clarifier layer [m]
+area of secondary clarifier [m2]
+threshold for X [mg/l]
+[mg/l]
+[m3/d]
+[m3/d]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[m3/d]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[mg/l]
+[m]
+[m2]
+total sludge concentration in m-th layer [mg/l]
+der(total sludge concentration in m-th layer) [mg/(l.s)]
+sink velocity in m-th layer [m/d]
+sedimentation flux m-th layer [g/(m2*d)]
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+[g/(m2*d)]
+[m]
+[m2]
+total sludge concentration in m-th layer [mg/l]
+der(total sludge concentration in m-th layer) [mg/(l.s)]
+sink velocity in m-th layer [m/d]
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+[g/(m2*d)]
+[m]
+[m2]
+total sludge concentration in m-th layer [mg/l]
+der(total sludge concentration in m-th layer) [mg/(l.s)]
+sink velocity in m-th layer [m/d]
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+[g/(m2*d)]
+[m]
+[m2]
+total sludge concentration in m-th layer [mg/l]
+der(total sludge concentration in m-th layer) [mg/(l.s)]
+sink velocity in m-th layer [m/d]
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+[g/(m2*d)]
+[m]
+[m2]
+total sludge concentration in m-th layer [mg/l]
+der(total sludge concentration in m-th layer) [mg/(l.s)]
+sink velocity in m-th layer [m/d]
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+[g/(m2*d)]
+[m]
+[m2]
+total sludge concentration in m-th layer [mg/l]
+der(total sludge concentration in m-th layer) [mg/(l.s)]
+sink velocity in m-th layer [m/d]
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+[g/(m2*d)]
+[m]
+[m2]
+total sludge concentration in m-th layer [mg/l]
+der(total sludge concentration in m-th layer) [mg/(l.s)]
+sink velocity in m-th layer [m/d]
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+[mg/l]
+[g/(m2*d)]
+[m]
+[m2]
+total sludge concentration in m-th layer [mg/l]
+der(total sludge concentration in m-th layer) [mg/(l.s)]
+sink velocity in m-th layer [m/d]
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+[mg/l]
+[g/(m2*d)]
+[m]
+[m2]
+total sludge concentration in m-th layer [mg/l]
+der(total sludge concentration in m-th layer) [mg/(l.s)]
+sink velocity in m-th layer [m/d]
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+[mg/l]
+[g/(m2*d)]
+[m]
+[m2]
+total sludge concentration in m-th layer [mg/l]
+der(total sludge concentration in m-th layer) [mg/(l.s)]
+sink velocity in m-th layer [m/d]
+Soluble inert organic matter [mg/l]
+der(Soluble inert organic matter) [mg/(l.s)]
+Readily biodegradable substrate [mg/l]
+der(Readily biodegradable substrate) [mg/(l.s)]
+Dissolved oxygen [mg/l]
+der(Dissolved oxygen) [mg/(l.s)]
+Nitrate and nitrite nitrogen [mg/l]
+der(Nitrate and nitrite nitrogen) [mg/(l.s)]
+Ammonium nitrogen [mg/l]
+der(Ammonium nitrogen) [mg/(l.s)]
+Soluble biodegradable organic nitrogen [mg/l]
+der(Soluble biodegradable organic nitrogen) [mg/(l.s)]
+Alkalinity [mmol/l]
+der(Alkalinity) [m-3.s-1.mol]
+[mg/l]
+maximum blower capacity [m3/d]
+minimum blower capacity [m3/d]
+
+maximum blower capacity [m3/d]
+minimum blower capacity [m3/d]
+
+maximum blower capacity [m3/d]
+minimum blower capacity [m3/d]
+
+
+Gain [1]
+Time Constant (T>0 required) [s]
+Type of initialization (1: no init, 2: steady state, 3: initial state, 4: initial output) [:#(type=Modelica.Blocks.Types.Init)]
+Initial or guess value of state
+Initial value of output
+Connector of Real input signal
+State of block
+der(State of block)
+
+Height of step
+Offset of output signal y
+Output y = offset for time < startTime [s]
+minimum pump capacity [m3/d]
+maximum pump capacity [m3/d]
+
+minimum pump capacity [m3/d]
+maximum pump capacity [m3/d]
+
+
+[m3/d]
+[m3/d]
+Height of step
+Connector of Real output signal
+Offset of output signal y
+Output y = offset for time < startTime [s]
+
+Gain [1]
+Time Constant (T>0 required) [s]
+Type of initialization (1: no init, 2: steady state, 3: initial state, 4: initial output) [:#(type=Modelica.Blocks.Types.Init)]
+Initial or guess value of state
+Initial value of output
+State of block
+der(State of block)
+Constant output value
+minimum pump capacity [m3/d]
+maximum pump capacity [m3/d]
+
+Constant output value
+Constant output value
+Number of outputs [:#(type=Integer)]
+= true, if table is defined on file or in function usertab [:#(type=Boolean)]
+= true, if info message that file is loading is to be printed [:#(type=Boolean)]
+Columns of table to be interpolated [:#(type=Integer)]
+Columns of table to be interpolated [:#(type=Integer)]
+Columns of table to be interpolated [:#(type=Integer)]
+Columns of table to be interpolated [:#(type=Integer)]
+Columns of table to be interpolated [:#(type=Integer)]
+Columns of table to be interpolated [:#(type=Integer)]
+Columns of table to be interpolated [:#(type=Integer)]
+Columns of table to be interpolated [:#(type=Integer)]
+Columns of table to be interpolated [:#(type=Integer)]
+Columns of table to be interpolated [:#(type=Integer)]
+Columns of table to be interpolated [:#(type=Integer)]
+Columns of table to be interpolated [:#(type=Integer)]
+Columns of table to be interpolated [:#(type=Integer)]
+Columns of table to be interpolated [:#(type=Integer)]
+Smoothness of table interpolation [:#(type=Modelica.Blocks.Types.Smoothness)]
+Extrapolation of data outside the definition range [:#(type=Modelica.Blocks.Types.Extrapolation)]
+Offsets of output signals
+Output = offset for time < startTime [s]
+Minimum abscissa value defined in table [s]
+Maximum abscissa value defined in table [s]
+Offsets of output signals
+Offsets of output signals
+Offsets of output signals
+Offsets of output signals
+Offsets of output signals
+Offsets of output signals
+Offsets of output signals
+Offsets of output signals
+Offsets of output signals
+Offsets of output signals
+Offsets of output signals
+Offsets of output signals
+Offsets of output signals
+Offsets of output signals
+[:#(type=Integer)]
+Next time event instant [s]
+= 1, if table was successfully read from file
+

@@ -1,0 +1,16 @@
+Log-file of program ./dymosim
+(generated: Fri Jan 26 11:48:53 2018)
+
+dymosim started
+... "dsin.txt" loading (dymosim input file)
+... loading "inf_dry" from "M:/Documents/Dymola/WasteWater-2.1.0/WasteWater-2.1.0/WasteWater 2.1.0/ASM1/Inf_dry.txt"
+The following error was detected at time: 0
+Table matrix "inf_dry" not found on file "M:/Documents/Dymola/WasteWater-2.1.0/WasteWater-2.1.0/WasteWater 2.1.0/ASM1/Inf_dry.txt".
+
+The stack of functions is:
+Modelica.Blocks.Sources.CombiTimeTable.readTableData
+Modelica.Blocks.Sources.CombiTimeTable.readTableData(
+CombiTableTime.tableID, 
+false, 
+CombiTableTime.verboseRead)
+Error: Failed to start model.
